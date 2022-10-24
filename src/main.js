@@ -6,7 +6,9 @@ import router from './router'
 
 import request from './utils/request'
 import storage from './utils/storage'
+import api from './api/index'
 import App from './App.vue'
+import store from './store'
 // import axios from  'axios'
 // import config from './config/index'
 
@@ -18,5 +20,6 @@ import App from './App.vue'
 const app = createApp(App)
 app.config.globalProperties.$request = request
 app.config.globalProperties.$storage = storage
-app.use(ElementPlus).use(router).mount('#app')
+app.config.globalProperties.$api = api
+app.use(ElementPlus).use(router).use(store).mount('#app')
 console.log("环境变量", import.meta.env);

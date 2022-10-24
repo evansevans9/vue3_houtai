@@ -25,7 +25,7 @@ instance.interceptors.response.use((res)=>{
     const { code,data,mes }  = res.data
     if(code == 200){
         return data
-    }else if(code == 40001){
+    }else if(code == 50001){
         ElMessage.error(TOLEN_ERROR)
         setTimeout(()=>{
             router.push('login')
@@ -39,6 +39,8 @@ instance.interceptors.response.use((res)=>{
 
 
 
+
+
 // request函数
 function request(options){
     options.method = options.method || 'get'
@@ -48,6 +50,10 @@ function request(options){
         options.params = options.data
     }
 
+
+    if(typeof options.mock !== 'undefined'){
+        config.mock = options.mock
+    }
     // 。。。。。
     if(config.env === 'prod'){
         instance.defaults.baseURL  = config.baseApi

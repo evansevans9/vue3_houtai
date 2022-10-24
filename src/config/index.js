@@ -2,7 +2,7 @@ const env = import.meta.env.MODE || 'prod'
 
 const EnvConfig = {
   dev: {
-    baseApi: '/',
+    baseApi: '/api',
     mockApi: 'https://www.fastmock.site/mock/8c923c4ccbee61ba681b1df6d04f6d5e/api'
   },
   test: {
@@ -18,7 +18,7 @@ const EnvConfig = {
 
 export default {
   env,
-  mock: true,
+  // mock: true,
   ...EnvConfig[env],
 //   命名空间
 namespace:'manage1'
