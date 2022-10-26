@@ -1,75 +1,79 @@
-import axios from "axios";
-import config from "../config/index"
+/**
+ * axios二次封装
+ */
+import axios from 'axios'
+import config from './../config'
+import { ElMessage } from 'element-plus'
+import router from './../router'
+import storage from './storage'
 
-import { ElMessage } from "element-plus";
-import router from "../router";
-import { promiseTimeout } from "@vueuse/shared";
+const TOKEN_INVALID = 'Token认证失败，请重新登录'
+const NETWORK_ERROR = '网络请求异常，请稍后重试'
 
-
-const TOLEN_ERROR = 'token认证失败，重新登录'
-const NETWORK_WORK = "网络异常，稍后再试"
-const instance = axios.create({
+// 创建axios实例对象，添加全局配置
+const service = axios.create({
     baseURL: config.baseApi,
-    timeout: 8000,
-  }); 
+    timeout: 8000
+})
 
+// 请求拦截
+service.interceptors.request.use((req) => {
+    // TO-DO
+    const headers = req.headers;
+    const { token = "" } = storage.getItem('userInfo') || {};
+    if (!headers.Authorization) headers.Authorization = 'Bearer ' + token;
+    return req;
+})
 
-instance.interceptors.request.use((req)=>{
-    const header = req.headers
-
-    if(!header.Authorization) header.Authorization = 'Jason'
-    return req
-});
-
-instance.interceptors.response.use((res)=>{
-    const { code,data,mes }  = res.data
-    if(code == 200){
-        return data
-    }else if(code == 50001){
-        ElMessage.error(TOLEN_ERROR)
-        setTimeout(()=>{
-            router.push('login')
-        })
-        return Promise.reject(TOLEN_ERROR)
-    }else{
-        ElMessage.error(NETWORK_WORK)
-        return Promise.reject(NETWORK_WORK)
+// 响应拦截
+service.interceptors.response.use((res) => {
+    const { code, data, msg } = res.data;
+    console.log(code);
+    if (code === 200) {
+        return data;
+    } else if (code === 50001) {
+        ElMessage.error(TOKEN_INVALID)
+        setTimeout(() => {
+            router.push('/login')
+        }, 1500)
+        return Promise.reject(TOKEN_INVALID)
+    } else {
+        ElMessage.error(msg || NETWORK_ERROR)
+        return Promise.reject(msg || NETWORK_ERROR)
     }
-});
-
-
-
-
-
-// request函数
-function request(options){
+})
+/**
+ * 请求核心函数
+ * @param {*} options 请求配置
+ */
+function request(options) {
     options.method = options.method || 'get'
-    
-    if(options.method.toLowerCase() === 'get'){
-        // 统一属性是data
-        options.params = options.data
+    if (options.method.toLowerCase() === 'get') {
+        options.params = options.data;
+    }
+    let isMock = config.mock
+    if (typeof options.mock != 'undefined') {
+        isMock = options.mock;
+    }
+    // console.log(config.mock);
+    if (config.env === 'prod') {
+        service.defaults.baseURL = config.baseApi
+    } else {
+        service.defaults.baseURL = isMock ? config.mockApi : config.baseApi
     }
 
-
-    if(typeof options.mock !== 'undefined'){
-        config.mock = options.mock
-    }
-    // 。。。。。
-    if(config.env === 'prod'){
-        instance.defaults.baseURL  = config.baseApi
-    }else{
-        instance.defaults.baseURL  = config.mock ? config.mockApi : config.baseApi
-    }
-    return instance(options)
+    return service(options)
 }
 
-
-['get','post','put','delete','patch'].forEach((item)=>{
-    request[item] = (url,data,options)=>{
+['get', 'post', 'put', 'delete', 'patch'].forEach((item) => {
+    request[item] = (url, data, options) => {
         return request({
-            url,data,method:item,...options
+            url,
+            data,
+            method: item,
+            ...options
         })
     }
 })
 
-export default request
+export default request;

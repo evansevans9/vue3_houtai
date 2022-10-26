@@ -7,5 +7,21 @@ export default{
             data:params,
             // mock:true
         })
-    }
+    },
+    menulist(){
+        return request({
+            url:'/menu/list',
+            method:'get',
+            data:{},
+            // mock:true
+        })
+    },
+    // noticCount(){
+    //     return request({
+    //         url:'/leave/count',
+    //         method:'get',
+    //         data:{},
+    //         // mock:true
+    //     })
+    // }
 }

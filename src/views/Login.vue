@@ -4,18 +4,16 @@ import { User,View } from '@element-plus/icons-vue'
     name:"login",
     data(){
       return{
-          user1:{
-              username:"",
-              userpassword:""
+          user:{
+              userName:"",
+              userPwd:""
           },
           rules:{
-             username: [
+             userName: [
             { required: true, message: '请输入用户名', trigger: 'blur' },
-            { min: 2, max: 9, message: '长度在 3 到 9 个字符', trigger: 'blur' }
           ],
-          userpassword: [
+          userPwd: [
             { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 2, max: 9, message: '长度在 3 到 9 个字符', trigger: 'blur' }
           ],
           }
       }
@@ -24,18 +22,20 @@ import { User,View } from '@element-plus/icons-vue'
       login(){
         this.$refs.loginForm.validate((val)=>{
             // console.log(val)
-
-            this.$api.login(this.user1).then((res)=>{
+        if(val){
+          this.$api.login(this.user).then((res)=>{
         console.log(res,1111)
         this.$store.commit('saveuserInfo',res)
         this.$router.push('/welcome')
        })
+
+        }
         })
     
       }
     },
     computed:{
-      User(){
+      User1(){
         return User
       },
       View(){
@@ -65,13 +65,13 @@ import { User,View } from '@element-plus/icons-vue'
 <template>
   <div class="login-wrapper">
     <div class="modal">
-      <el-form :model="user1" :rules="rules" status-icon ref="loginForm">
+      <el-form :model="user" :rules="rules" status-icon ref="loginForm">
         <div class="title">请登录</div>
-        <el-form-item prop="username">
-            <el-input v-model="user1.username" placeholder="请输入"  :suffix-icon="User" type="text" />
+        <el-form-item prop="userName">
+            <el-input v-model="user.userName" placeholder="请输入"  :suffix-icon="User1" type="text" />
         </el-form-item>
-        <el-form-item prop="userpassword">
-            <el-input v-model="user1.userpassword" placeholder="请输入"  :suffix-icon="View" type="password"/>
+        <el-form-item prop="userPwd">
+            <el-input v-model="user.userPwd" placeholder="请输入"  :suffix-icon="View" type="password"/>
         </el-form-item>
         <el-form-item>
              <el-button type="primary" class="btn-login" @click="login">Primary</el-button>
