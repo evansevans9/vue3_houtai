@@ -1,4 +1,6 @@
 <script>
+import TreeMenu from './TreeMenu.vue'
+import Breadcrumb from './Breadcrumb.vue'
 import {
   Document,
   Menu as IconMenu,
@@ -14,16 +16,14 @@ import {
         setting:Setting,
         switch1:Switch,
         bell:Bell,
-        ArrowDown
+        ArrowDown,
+        TreeMenu,
+        Breadcrumb
       },
     data(){
       return{
         isCollapse:false,
-        userInfo:{
-          name:'zhuming',
-          email:1228838848,
-          www:'退出'
-        },
+        userInfo:this.$store.state.userInfo,
         noticCount:0,
         userMenu:[]
       }
@@ -32,6 +32,8 @@ import {
     mounted() {
       // this.getnoticCount()
       this.getmenulist()
+      // console.log(this.$storage.getItem('userInfo'),'oooooooooo') 
+      // console.log(this.userInfo,'bb')
     },
     methods: {
       handleCommand(val){
@@ -85,32 +87,15 @@ import {
         :collapse="isCollapse"
         router
       >
-        <el-sub-menu index="1">
+        <!-- <el-sub-menu index="1">
           <template #title>
              <el-icon><setting class="menu_seting"/></el-icon>
             <span>系统管理</span>
           </template>
             <el-menu-item index="1-1">用户管理</el-menu-item>
             <el-menu-item index="1-2">菜单管理</el-menu-item>
-        </el-sub-menu>
-
-        <el-sub-menu index="2">
-          <template #title>
-            <el-icon><setting class="menu_seting"/></el-icon>
-            <span>审批管理</span>
-          </template>
-            <el-menu-item index="2-1">用户管理</el-menu-item>
-            <el-menu-item index="2-2">菜单管理</el-menu-item>
-        </el-sub-menu>
-
-        <el-sub-menu index="3">
-          <template #title>
-            <el-icon><setting class="menu_seting"/></el-icon>
-            <span>系统管理</span>
-          </template>
-            <el-menu-item index="3-1">用户管理</el-menu-item>
-            <el-menu-item index="3-2">菜单管理</el-menu-item>
-        </el-sub-menu>
+        </el-sub-menu> -->
+        <tree-menu :userMenu="userMenu"></tree-menu>
       </el-menu>
 
 
@@ -118,8 +103,17 @@ import {
       <div :class='["content_right",isCollapse ? "fold" : "unfold"]'>
         <div class="nav_top">
           <div class="nav_top1">
-            <el-icon><switch1 class="menu_seting" @click="toggle"/></el-icon>
-            <div class="bread">面包屑</div>
+            <el-icon><switch1 class="menu_seting1" @click="toggle"/></el-icon>
+            <div class="bread">
+              <!-- <Breadcrumb /> -->
+              <!-- 1111 -->
+              <el-breadcrumb :separator-icon="ArrowRight">
+    <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
+    <el-breadcrumb-item>promotion management</el-breadcrumb-item>
+    <el-breadcrumb-item>promotion list</el-breadcrumb-item>
+    <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+  </el-breadcrumb>
+            </div>
           </div>
           
           <div class="user_info">
@@ -131,15 +125,15 @@ import {
             <!-- 最右 -->
             <el-dropdown @command="handleCommand">
               <span class="el_dropdown1">
-              {{userInfo.name}}
+              {{userInfo.userName}}
                 <el-icon class="el_arrow">
                   <arrow-down />
                 </el-icon>
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item command="a">{{userInfo.email}}</el-dropdown-item>
-                  <el-dropdown-item command="b">{{userInfo.www}}</el-dropdown-item>
+                  <el-dropdown-item command="a">邮箱:{{userInfo.userEmail}}</el-dropdown-item>
+                  <el-dropdown-item command="b">退出</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -202,9 +196,13 @@ import {
       padding: 0 20px;
       .nav_top1{
         display: flex;
-        width: 80px;
+        // width: 80px;
         align-items: center;
         justify-content: space-between;
+        .bread{
+          margin-left: 30px;
+        }
+        
       }
     }
     .nav_down{

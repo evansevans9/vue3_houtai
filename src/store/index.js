@@ -6,7 +6,7 @@ import storage from '../utils/storage'
 
 export default new Vuex.Store({
   state: {
-    userInfo : "" || storage.getItem('userInfo')
+    userInfo : storage.getItem('userInfo') || "" 
   },
   getters: {
 
