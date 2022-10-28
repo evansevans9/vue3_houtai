@@ -30,10 +30,10 @@ import {
 
     },
     mounted() {
-      // this.getnoticCount()
+      this.getnoticCount()
       this.getmenulist()
-      // console.log(this.$storage.getItem('userInfo'),'oooooooooo') 
-      // console.log(this.userInfo,'bb')
+      console.log(this.$storage.getItem('userInfo'),'oooooooooo') 
+      console.log(this.userInfo,'bb')
     },
     methods: {
       handleCommand(val){
@@ -52,14 +52,10 @@ import {
       toggle(){
         this.isCollapse  = !this.isCollapse
       },
-
-      //  getnoticCount(){
-      //   this.$api.noticCount((res)=>{
-      //       console.log(res)
-      //   })
-      //   console.log(res,'dsdsdsdsdsdsdss')
-      //   console.log(res)
-      // }
+       async getnoticCount(){
+       const res =  await this.$api.noticCount()
+       console.log(res,'aaaaaaaaaaaa')
+      },
        async getmenulist(){
        const res =  await this.$api.menulist()
         this.userMenu = res
@@ -95,6 +91,7 @@ import {
             <el-menu-item index="1-1">用户管理</el-menu-item>
             <el-menu-item index="1-2">菜单管理</el-menu-item>
         </el-sub-menu> -->
+        
         <tree-menu :userMenu="userMenu"></tree-menu>
       </el-menu>
 
@@ -105,14 +102,9 @@ import {
           <div class="nav_top1">
             <el-icon><switch1 class="menu_seting1" @click="toggle"/></el-icon>
             <div class="bread">
-              <!-- <Breadcrumb /> -->
+              <Breadcrumb />
               <!-- 1111 -->
-              <el-breadcrumb :separator-icon="ArrowRight">
-    <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-    <el-breadcrumb-item>promotion management</el-breadcrumb-item>
-    <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-    <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
-  </el-breadcrumb>
+              
             </div>
           </div>
           
@@ -211,7 +203,7 @@ import {
       height: calc(100vh - 50px);
       .main_page{
         height: 100%;
-        background-color: #fff;
+        // background-color: #fff;
       }
     }
     .user_badge{

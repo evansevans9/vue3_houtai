@@ -18,7 +18,7 @@ const EnvConfig = {
 
 export default {
   env,
-  mock: true,
+  mock: false,
   ...EnvConfig[env],
 //   命名空间
 namespace:'manage1'

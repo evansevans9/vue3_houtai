@@ -13,15 +13,23 @@ export default{
             url:'/menu/list',
             method:'get',
             data:{},
-            // mock:true
+            mock:true
         })
     },
-    // noticCount(){
-    //     return request({
-    //         url:'/leave/count',
-    //         method:'get',
-    //         data:{},
-    //         // mock:true
-    //     })
-    // }
+    noticCount(){
+        return request({
+            url:'/leave/count',
+            method:'get',
+            data:{},
+            mock:true
+        })
+    },
+    getserList(params){
+        return request({
+            url:'/users/list',
+            method:'get',
+            data:params,
+            mock:true
+        })
+    }
 }

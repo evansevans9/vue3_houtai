@@ -22,6 +22,7 @@ export default {
   height: 100%;
   justify-content: center;
   align-items: center;
+  background-color: #fff;
   .content{
     position: relative;
     bottom: 30px;
