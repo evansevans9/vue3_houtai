@@ -31,5 +31,29 @@ export default{
             data:params,
             mock:true
         })
-    }
+    },
+    userDelete(params){
+        return request({
+            url:'/users/delete',
+            method:'post',
+            data:params,
+            mock:true
+        })
+    },
+    getrouleslist(params){
+        return request({
+            url:'/roles/allList',
+            method:'get',
+            data:params,
+            mock:true
+        })
+    },
+    getdeptlist(params){
+        return request({
+            url:'/dept/list',
+            method:'get',
+            data:params,
+            mock:true
+        })
+    },
 }
