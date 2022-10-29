@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted, ref, getCurrentInstance } from "vue"
+import { reactive, onMounted, ref, getCurrentInstance, toRaw } from "vue"
 onMounted((ww) => {
   console.log("---onMounted---")
   getuserlist1()
@@ -58,7 +58,7 @@ const columns = reactive([
 ])
 const getuserlist1 = async () => {
   let params = { ...user, ...pager }
-  console.log(await proxy.$api.getserList(), "vvvvvvvvvv")
+  // console.log(await proxy.$api.getserList(), "vvvvvvvvvv")
   const { page, list } = await proxy.$api.getserList(params)
   pager.total = page.total
   userList.value = list
@@ -67,8 +67,8 @@ const handlequery = () => {
   getuserlist1()
   // console.log('sssssssssssssss')
 }
-const handlereset = () => {
-  proxy.$refs.from1.resetFields()
+const handlereset = (form) => {
+  proxy.$refs[form].resetFields()
 }
 const handleCurrentChange = (val) => {
   pager.pageNum = val
@@ -116,9 +116,10 @@ const handleSelectionChange = (val) => {
 // 新增
 const showModel = ref(false)
 const handeleAddUser = () => {
+  action.value = 'add'
   showModel.value = true
 }
-const userform = reactive([])
+const userform = reactive({})
 const rules = ref(
    {
     userName: {
@@ -157,6 +158,36 @@ const res = await proxy.$api.getdeptlist()
 deptlist1.value = res
 console.log(res,'ddddddddddddddddddddddm')
 }
+const handleCancel = ()=>{
+  showModel.value = false;
+  handlereset('formdialog')
+
+}
+const action = ref("add")
+const handelDetermineAdd = ()=>{
+    proxy.$refs.formdialog.validate(async(val)=>{
+      if(val){
+        let params =  toRaw(userform)
+        params.userEmail  += '@jason.com'
+        params.action = action.value
+         console.log(params,'ssssssssssssssssssssssssss')
+        let res = await proxy.$api.getoperate(params);
+        if(res){
+           showModel.value = false;
+           proxy.$message.success('添加成功')
+           handlereset('formdialog')
+           getuserlist1()
+        }
+      }
+    })
+}
+const handleEdit = (row)=>{
+  action.value = 'edit'
+  showModel.value = true;
+  proxy.$nextTick(()=>{
+    Object.assign(userform,row)
+  })
+}
 </script>
 <template>
   <div class="user-manager">
@@ -180,7 +211,7 @@ console.log(res,'ddddddddddddddddddddddm')
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handlequery">查询</el-button>
-          <el-button @click="handlereset">重置</el-button>
+          <el-button @click="handlereset('from1')">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -209,7 +240,7 @@ console.log(res,'ddddddddddddddddddddddm')
         <!-- 操作 -->
         <el-table-column label="操作" width="160">
           <template #default="scope">
-            <el-button type="primary" size="mini" @click="handleClick"
+            <el-button type="primary" size="mini" @click="handleEdit(scope.row)" 
               >编辑</el-button
             >
             <el-button
@@ -240,10 +271,10 @@ console.log(res,'ddddddddddddddddddddddm')
         :rules="rules"
       >
         <el-form-item label="userName" prop="userName">
-          <el-input v-model="userform.userName" placeholder="请输入用户名" />
+          <el-input v-model="userform.userName" placeholder="请输入用户名"  :disabled='action == "edit"'/>
         </el-form-item>
         <el-form-item label="userEmail" prop="userEmail">
-          <el-input v-model="userform.userEmail" placeholder="请输入邮箱">
+          <el-input v-model="userform.userEmail" placeholder="请输入邮箱" :disabled='action == "edit"'>
             <template #append>@jason.com</template>
           </el-input>
         </el-form-item>
@@ -277,13 +308,15 @@ console.log(res,'ddddddddddddddddddddddm')
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">Cancel</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false">
-            Confirm
+          <el-button @click="handleCancel">取消</el-button>
+          <el-button type="primary" @click="handelDetermineAdd">
+            确定
           </el-button>
         </span>
       </template>
     </el-dialog>
+
+
   </div>
 </template>
 <style lang="scss">

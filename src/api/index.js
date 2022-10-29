@@ -56,4 +56,12 @@ export default{
             mock:true
         })
     },
+    getoperate(params){
+        return request({
+            url:'/users/operate',
+            method:'post',
+            data:params,
+            mock:true
+        })
+    },
 }
