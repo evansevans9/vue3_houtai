@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, onMounted, ref, getCurrentInstance, toRaw } from "vue"
+import utils from "../utils/utils"
 onMounted((ww) => {
   console.log("---onMounted---")
   getuserlist1()
@@ -7,7 +8,7 @@ onMounted((ww) => {
   getdeptlist1()
 })
 const user = reactive({
-  state: 0,
+  state: 1,
 })
 const pager = reactive({
   pageNum: 1,
@@ -50,10 +51,16 @@ const columns = reactive([
   {
     label: "注册时间",
     prop: "createTime",
+    formatter(row , column ,cellValue ){
+      return utils.formateDate(new Date(cellValue))
+    }
   },
   {
     label: "登录时间",
     prop: "lastLoginTime",
+    formatter(row , column ,cellValue ){
+      return utils.formateDate(new Date(cellValue))
+    }
   },
 ])
 const getuserlist1 = async () => {
@@ -77,14 +84,14 @@ const handleCurrentChange = (val) => {
 // 单个删除
 const handleDelete = async (row) => {
   const res = await proxy.$api.userDelete({
-    userId: [row.userId],
+    userIds: [row.userId],
   })
 
-  if (res.nModified > 0) {
+  if (res.modifiedCount > 0) {
     proxy.$message.success("删除成功")
     getuserlist1()
   } else {
-    proxy.$message.success("删除失败")
+    proxy.$message.error("删除失败")
   }
   //   console.log(row, "aaaaaaaaaaazzzzzzzzz")
 }
@@ -96,9 +103,9 @@ const handlePiLiangDelete = async () => {
     return
   }
   const res = await proxy.$api.userDelete({
-    userId: checkuserid.value,
+    userIds: checkuserid.value,
   })
-  if (res.nModified > 0) {
+  if (res.modifiedCount > 0) {
     proxy.$message.success("删除成功")
     getuserlist1()
   } else {
@@ -170,11 +177,16 @@ const handelDetermineAdd = ()=>{
         let params =  toRaw(userform)
         params.userEmail  += '@jason.com'
         params.action = action.value
-         console.log(params,'ssssssssssssssssssssssssss')
+        //  console.log(params,'ssssssssssssssssssssssssss')
         let res = await proxy.$api.getoperate(params);
         if(res){
            showModel.value = false;
-           proxy.$message.success('添加成功')
+           if(action.value == 'add'){
+            proxy.$message.success('添加成功')
+           }else{
+            proxy.$message.success('编辑成功')
+           }
+          
            handlereset('formdialog')
            getuserlist1()
         }
@@ -185,8 +197,15 @@ const handleEdit = (row)=>{
   action.value = 'edit'
   showModel.value = true;
   proxy.$nextTick(()=>{
+    row.state = row.state - 0 
     Object.assign(userform,row)
   })
+}
+const handleClose1 =  ()=>{
+   handlereset('formdialog')
+   showModel.value = false
+
+
 }
 </script>
 <template>
@@ -263,7 +282,7 @@ const handleEdit = (row)=>{
 
     <!-- 弹出的dialog 对话框 -->
 
-    <el-dialog v-model="showModel" title="新增用户">
+    <el-dialog v-model="showModel" title="新增用户" :before-close="handleClose1">
       <el-form
         :model="userform"
         ref="formdialog"

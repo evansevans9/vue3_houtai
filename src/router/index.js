@@ -28,6 +28,14 @@ const routes = [
         },
         component: ()=> import('../views/User.vue'),
       },
+      {
+        name: "",
+        path: "/system/menu",
+        meta: {
+          title: "菜单管理管理",
+        },
+        component: ()=> import('../views/Menu.vue'),
+      },
     ],
   },
   {

@@ -5,7 +5,7 @@ export default{
             url:'/users/login',
             method:'post',
             data:params,
-            // mock:true
+            mock:false
         })
     },
     menulist(){
@@ -29,7 +29,7 @@ export default{
             url:'/users/list',
             method:'get',
             data:params,
-            mock:true
+            mock:false
         })
     },
     userDelete(params){
@@ -37,7 +37,7 @@ export default{
             url:'/users/delete',
             method:'post',
             data:params,
-            mock:true
+            // mock:true
         })
     },
     getrouleslist(params){
@@ -61,7 +61,7 @@ export default{
             url:'/users/operate',
             method:'post',
             data:params,
-            mock:true
+            // mock:true
         })
     },
 }
