@@ -13,7 +13,7 @@ export default{
             url:'/menu/list',
             method:'get',
             data:{},
-            mock:true
+            // mock:true
         })
     },
     noticCount(){
@@ -62,6 +62,14 @@ export default{
             method:'post',
             data:params,
             // mock:true
+        })
+    },
+    menuSubmit(params){
+        return request({
+            url:'/menu/operate',
+            method:'post',
+            data:params,
+            mock:true
         })
     },
 }
