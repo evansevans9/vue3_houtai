@@ -179,13 +179,13 @@ export default {
               >新增</el-button
             >
             <el-button
-              type="primary"
+             
               size="mini"
               @click="handleEditmenu(scope.row)"
               >编辑</el-button
             >
             <el-button
-              type="primary"
+              type="danger"
               size="mini"
               @click="handleDeletemenu(scope.row)"
               >删除</el-button

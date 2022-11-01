@@ -259,11 +259,11 @@ const handleClose1 =  ()=>{
         <!-- 操作 -->
         <el-table-column label="操作" width="160">
           <template #default="scope">
-            <el-button type="primary" size="mini" @click="handleEdit(scope.row)" 
+            <el-button  size="mini" @click="handleEdit(scope.row)" 
               >编辑</el-button
             >
             <el-button
-              type="primary"
+              type="danger"
               size="mini"
               @click="handleDelete(scope.row)"
               >删除</el-button

@@ -8,17 +8,21 @@ export default {
         roleName: "",
       },
       roleList: [],
-      showModel:false,
+      showModel: false,
+      showPermission: false,
+      curRoleName: "",
+      curRoleID: "",
+      menuList:[],
       pager: {
         pageNum: 1,
         PageSize: 10,
         total: 1,
       },
-       rules: {
+      rules: {
         roleName: [{ required: true, message: "请输入", trigger: "blur" }],
       },
-      roleFrom:{},
-      action : "",
+      roleFrom: {},
+      action: "",
       columns: [
         {
           label: "角色名称",
@@ -44,6 +48,7 @@ export default {
   },
   mounted() {
     this.getroleList()
+    this.getmenuList1()
   },
   methods: {
     async getroleList() {
@@ -51,49 +56,68 @@ export default {
       this.pager = page
       this.roleList = list
     },
-    handleAdd2(){
-      this.action = 'add'
+    handleAdd2() {
+      this.action = "add"
       this.showModel = true
     },
-      handlereset1(form) {
+    handlereset1(form) {
       this.$refs[form].resetFields()
     },
-    handleCancel(){
+    handleCancel() {
       this.showModel = false
-      this.handlereset1('formdialog')
+      this.handlereset1("formdialog")
     },
-    handleCloseDialog(){
+    handleCloseDialog() {
       this.showModel = false
-      this.handlereset1('formdialog')
+      this.handlereset1("formdialog")
+    },
+    handelDetermine() {
+      this.$refs.formdialog.validate(async (val) => {
+        if (val) {
+          let { action, roleFrom } = this
+
+          let params = { ...roleFrom, action }
+          let res = await this.$api.roleoperate(params)
+          if (res) {
+            this.$message.success("操作成功")
+            this.showModel = false
+            this.handlereset1("formdialog")
+            this.getroleList()
+          }
+        }
+      })
+    },
+    handleEdit(row) {
+      this.action = "edit"
+      this.showModel = true
+      this.$nextTick(() => {
+        this.roleFrom1 = row
+        
+      })
+    },
+    async handleDelete(_id) {
+      await this.$api.roleoperate({ _id, action: "delete" })
+      this.$message.success("删除成功")
+      this.getroleList()
+    },
+    handleCloseDialog1() {
+      this.showPermission = false
+    },
+    handleCloseDialog2(){
+      this.showPermission = false
+    },
+    // 设置权限
+    handelePermission(row) {
+      this.showPermission = true
+      this.curRoleName = row.roleName
+      this.curRoleID = row._id
+    },
+    async getmenuList1(){
+      let list =  await this.$api.menulist()
+      this.menuList = list
     },
     handelDetermine(){
-      this.$refs.formdialog.validate( async (val)=>{
-          if(val){
-            let { action , roleFrom } = this;
-         
-            let params = { ...roleFrom, action }
-            let res =  await this.$api.roleoperate(params)
-            if(res){
-              this.$message.success('操作成功')
-              this.showModel = false
-              this.handlereset1('formdialog')
-              this.getroleList()
-            }
-          }
-      })
-    },
-    handleEdit(row){
-      this.action =  "edit"
-      this.showModel = true
-      this.$nextTick(()=>{
-        this.roleFrom = row
-        this.$message.success('编辑成功')
-      })
-    },
-    async handleDelete(_id){
-      await this.$api.roleoperate({_id,action:'delete'})
-       this.$message.success('删除成功')
-       this.getroleList()
+      this.showModel = false
     }
   },
 }
@@ -136,19 +160,17 @@ export default {
         <!-- 操作 -->
         <el-table-column label="操作" width="300">
           <template #default="scope">
-            <el-button
-              type="primary"
-              size="mini"
-              @click="handleEdit( scope.row)"
+            <el-button type="primary" size="mini" @click="handleEdit(scope.row)"
               >编辑</el-button
             >
             <el-button
               type="primary"
               size="mini"
+              @click="handelePermission(scope.row)"
               >设置权限</el-button
             >
             <el-button
-              type="primary"
+              type="danger"
               size="mini"
               @click="handleDelete(scope.row)"
               >删除</el-button
@@ -170,26 +192,59 @@ export default {
     <el-dialog
       v-model="showModel"
       title="新增角色"
-      :before-close="handleCloseDialog"
+      :before-close="handleCloseDialog1"
     >
-      <el-form
-        :model="roleFrom"
-        ref="formdialog"
-        label-width="120px"
-        :rules="rules"
-      >
+      <el-form label-width="120px">
         <el-form-item label="角色名字" prop="roleName">
+        
           <el-input v-model="roleFrom.roleName" placeholder="请输入名称" />
         </el-form-item>
         <el-form-item label="菜单类型" prop="remark">
-          <el-input type="text-area" :rows="2" v-model="roleFrom.remark" placeholder="请输入备注" />
+          <el-input
+            type="text-area"
+            :rows="2"
+            v-model="roleFrom.remark"
+            placeholder="请输入备注"
+          />
         </el-form-item>
-
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="handleCancel">取消</el-button>
           <el-button type="primary" @click="handelDetermine"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <el-dialog
+      v-model="showPermission"
+      title="设置权限"
+      :before-close="handleCloseDialog2"
+    >
+      <el-form
+        :model="roleFrom1"
+        ref="formdialog"
+        label-width="120px"
+        :rules="rules"
+      >
+        <el-form-item label="角色名字" prop="roleName">
+            {{ curRoleName }}
+        </el-form-item>
+        <el-form-item label="选择权限" prop="remark">
+          <el-tree
+            :data="menuList"
+            :props="{ label: 'menuName' }"
+            default-expand-all
+            node-key="_id"
+            show-checkbox
+           
+          ></el-tree>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="this.showPermission = false">取消</el-button>
+          <el-button type="primary" @click="handelDetermine1"> 确定 </el-button>
         </span>
       </template>
     </el-dialog>
