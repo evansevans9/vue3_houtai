@@ -13,11 +13,13 @@ export default {
       menuFrom: {
         menuType: 1,
         menuState: 1,
+        parentId: [null],
       },
       rules: {
         menuName: [{ required: true, message: "请输入", trigger: "blur" }],
         icon: [{ required: true, message: "请输入", trigger: "blur" }],
       },
+      
       columns: [
         {
           label: "菜单名称",
@@ -64,12 +66,12 @@ export default {
   },
   methods: {
     async getmenuList() {
-      const res = await this.$api.menulist(this.menuFrom )
+      const res = await this.$api.menulist(this.menuFrom)
       this.menuList = res
     },
     handlequery1() {
-      this.menuFrom.menuName =  this.queryFrom.menuName
-      this.menuFrom.menuState =  this.queryFrom.menuState
+      this.menuFrom.menuName = this.queryFrom.menuName
+      this.menuFrom.menuState = this.queryFrom.menuState
       this.getmenuList()
     },
     handlereset1(form) {
@@ -87,16 +89,15 @@ export default {
     },
     handleEditmenu(row) {
       this.showModel = true
-      this.action = 'edit'
+      this.action = "edit"
       // this.menuFrom  = row
-      this.$nextTick(()=>{
-        Object.assign( this.menuFrom ,row)
+      this.$nextTick(() => {
+        Object.assign(this.menuFrom, row)
       })
-
     },
-    async handleDeletemenu() {
-      await  this.$api.menuSubmit({_id,action:'delete'})
-      this.$message.success('删除成功')
+    async handleDeletemenu(_id) {
+      await this.$api.menuSubmit({ _id, action: "delete" })
+      this.$message.success("删除成功")
       this.getmenuList()
     },
     handleCancel() {
@@ -106,16 +107,16 @@ export default {
     handelDetermine() {
       this.$refs.formdialog.validate(async (val) => {
         if (val) {
-          let { action, menuFrom } = this;
-          let params = { ...menuFrom,action }
-          await  this.$api.menuSubmit(params)
+          let { action, menuFrom } = this
+          let params = { ...menuFrom, action }
+          await this.$api.menuSubmit(params)
           this.showModel = false
-          this.$message.success('操作成功')
-           this.handlereset1("formdialog")
-           
-           setTimeout(()=>{
-              this.getmenuList()
-           },3000)
+          this.$message.success("操作成功")
+          this.handlereset1("formdialog")
+
+          setTimeout(() => {
+            this.getmenuList()
+          }, 3000)
         }
       })
     },
@@ -159,7 +160,7 @@ export default {
         @selection-change="handleSelectionChange"
         row-key="_id"
       >
-        <el-table-column type="selection" width="55" />
+        <!-- <el-table-column type="selection" width="55" /> -->
         <el-table-column
           v-for="item in columns"
           :key="item.prop"

@@ -69,7 +69,24 @@ export default{
             url:'/menu/operate',
             method:'post',
             data:params,
+            // mock:true
+        })
+    },
+    rolelist(){
+        return request({
+            url:'/roles/list',
+            method:'get',
+            // data:params,
             mock:true
         })
     },
+    roleoperate(params){
+        return request({
+            url:'/roles/operate',
+            method:'post',
+            data:params,
+            mock:true
+        })
+    }
+
 }
