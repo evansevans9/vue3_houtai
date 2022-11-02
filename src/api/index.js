@@ -32,6 +32,14 @@ export default{
             mock:false
         })
     },
+    userAllList(params){
+        return request({
+            url:'/users/all/list',
+            method:'get',
+            data:params,
+            mock:true
+        })
+    },
     userDelete(params){
         return request({
             url:'/users/delete',
@@ -53,7 +61,8 @@ export default{
             url:'/dept/list',
             method:'get',
             data:params,
-            mock:true
+            // mock:true
+            mock:false
         })
     },
     getoperate(params){
@@ -86,6 +95,14 @@ export default{
             method:'post',
             data:params,
             mock:true
+        })
+    },
+    getDeptoperate(params){
+        return request({
+            url:'/dept/operate',
+            method:'post',
+            data:params,
+            mock:false
         })
     }
 
