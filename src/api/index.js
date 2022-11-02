@@ -37,7 +37,7 @@ export default{
             url:'/users/all/list',
             method:'get',
             data:params,
-            mock:true
+            mock:false
         })
     },
     userDelete(params){
@@ -54,6 +54,14 @@ export default{
             method:'get',
             data:params,
             mock:true
+        })
+    },
+    getpermissionList(){
+        return request({
+            url:'/users/getPremissionList',
+            method:'get',
+            data:{},
+            // mock:true
         })
     },
     getdeptlist(params){
@@ -103,6 +111,14 @@ export default{
             method:'post',
             data:params,
             mock:false
+        })
+    },
+    updatePermission(params){
+        return request({
+            url:'/roles/update/permission',
+            method:'post',
+            data:params,
+            mock:true
         })
     }
 

@@ -58,6 +58,7 @@ import {
       },
        async getmenulist(){
        const res =  await this.$api.menulist()
+      //  const res =  await this.$api.getpermissionList()
         this.userMenu = res
         console.log(res,'090')
       }
